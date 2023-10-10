@@ -1,0 +1,25 @@
+name: Upload New Files
+
+on:
+  push:
+    paths:
+      - 'csv/**'
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Add and commit new files
+        run: |
+          git add csv/
+          git diff-index --quiet HEAD || git commit -m "Auto-commit new files"
+        if: github.event_name != 'pull_request'
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.7.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
